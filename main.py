@@ -93,7 +93,7 @@ class Gutenberg_Scraper():
     
     
     def get_book_by_id(self,bookid):
-        threshold=300
+        threshold=1
         url = BASE_URL + "ebooks/"+bookid
         r=self.session.get(url)
         soup = BeautifulSoup(r.content,features="lxml")
@@ -101,8 +101,8 @@ class Gutenberg_Scraper():
         
         if (self.check_prev_downloads):
             if (not self.downloaded(booktitle)):
-                if (self.get_language(soup)!="English"):
-                    print("<--- SKIPPING %s; this title is not in English --->" % (booktitle))
+                if (self.get_language(soup)!="German"):
+                    print("<--- SKIPPING %s; this title is not in German --->" % (booktitle))
                     return
                 if (self.get_downloads(soup)<threshold):
                     print("<--- SKIPPING %s; this title has fewer than %d downloads --->" % (booktitle,threshold))
@@ -144,8 +144,8 @@ class Gutenberg_Scraper():
         bibrec=soup.find("div", {"id":"bibrec"})
         try:
             language = bibrec.find("tr",{"property":"dcterms:language"}).text
-            if "English" in language:
-                return "English"
+            if "German" in language:
+                return "German"
             return language
         except:
             print("<--- ERROR GETTING LANGUAGE --->")
@@ -184,10 +184,11 @@ class Gutenberg_Scraper():
             print("<--- DOWNLOADING %s --->" % (booktitle))
             r=self.session.get(data_link)
             filename=self.data_directory+booktitle+".txt"
-            
-            file = open(filename, "w")
-            file.write(r.text)
-            file.close()
+
+            # UTF 8 IS NOT FULLY WORKING; UMLAUTBUCHSTABE WERDEN NICHT RICHTIG GESCHRIEBEN
+            with open(filename, 'w', encoding='utf-8') as file:
+                file.write(r.text)
+
             self.downloaded_books.add(booktitle+".txt")
         except Exception as e:
             print(e)

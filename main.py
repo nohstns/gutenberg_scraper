@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import os
 import argparse
 import sys
+import ftfy
 
 
 #constants
@@ -183,11 +184,12 @@ class Gutenberg_Scraper():
         try:
             print("<--- DOWNLOADING %s --->" % (booktitle))
             r=self.session.get(data_link)
-            filename=self.data_directory+booktitle+".txt"
+            filename=self.data_directory+self.action+".txt"
+
 
             # UTF 8 IS NOT FULLY WORKING; UMLAUTBUCHSTABE WERDEN NICHT RICHTIG GESCHRIEBEN
             with open(filename, 'w', encoding='utf-8') as file:
-                file.write(r.text)
+                file.write(ftfy.fix_text(r.text))
 
             self.downloaded_books.add(booktitle+".txt")
         except Exception as e:

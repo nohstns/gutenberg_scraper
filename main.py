@@ -94,7 +94,7 @@ class Gutenberg_Scraper():
     
     
     def get_book_by_id(self,bookid):
-        threshold=1
+        threshold=5
         url = BASE_URL + "ebooks/"+bookid
         r=self.session.get(url)
         soup = BeautifulSoup(r.content,features="lxml")
@@ -187,7 +187,6 @@ class Gutenberg_Scraper():
             filename=self.data_directory+self.action+".txt"
 
 
-            # UTF 8 IS NOT FULLY WORKING; UMLAUTBUCHSTABE WERDEN NICHT RICHTIG GESCHRIEBEN
             with open(filename, 'w', encoding='utf-8') as file:
                 file.write(ftfy.fix_text(r.text))
 
